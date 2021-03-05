@@ -15,11 +15,11 @@ from keras.utils.generic_utils import (
 import dill as pickle
 
 optimizer_map = {
-    "Adagrad": tf.train.AdagradOptimizer,
-    "Adam": tf.train.AdamOptimizer,
-    "Ftrl": tf.train.FtrlOptimizer,
-    "RMSProp": tf.train.RMSPropOptimizer,
-    "SGD": tf.train.GradientDescentOptimizer,
+    "Adagrad": tf.compat.v1.train.AdagradOptimizer,
+    "Adam": tf.compat.v1.train.AdamOptimizer,
+    "Ftrl": tf.compat.v1.train.FtrlOptimizer,
+    "RMSProp": tf.compat.v1.train.RMSPropOptimizer,
+    "SGD": tf.compat.v1.train.GradientDescentOptimizer,
 }
 
 initializers = {

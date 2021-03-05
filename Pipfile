@@ -4,8 +4,8 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-tensorflow = "==1.14.0"
-tensorflowjs = "==1.2.3"
+tensorflow = "==1.15.0"
+tensorflowjs = "==1.4.0"
 keras = "==2.2.4"
 dill = "==0.2.8.2"
 GPUtil = "==1.4.0"
