@@ -499,6 +499,13 @@ def run_internal_graph(model, inputs, mode, mask=None):
             reference_input_tensors = node.input_tensors
             reference_output_tensors = node.output_tensors
 
+            # issue: https://github.com/tensorflow/tensorflow/issues/30208
+            if not isinstance(reference_input_tensors, list):
+                reference_input_tensors = [reference_input_tensors]
+
+            if not isinstance(reference_output_tensors, list):
+                reference_output_tensors = [reference_output_tensors]
+
             # If all previous input tensors are available in tensor_map,
             # then call node.inbound_layer on them.
             computed_data = []  # List of tuples (input, mask).
