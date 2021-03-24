@@ -57,7 +57,10 @@ def make_csv_dataset(
             raise ValueError("Cannot infer column names without a header line.")
         # If column names are not provided, infer from the header lines
         column_names = _infer_column_names(
-            filenames, field_delim, use_quote_delim, lambda filename: file_io.FileIO(filename, "r")
+            filenames,
+            field_delim,
+            use_quote_delim,
+            lambda filename: file_io.FileIO(filename, "r"),
         )
     if len(column_names) != len(set(column_names)):
         raise ValueError("Cannot have duplicate column names.")
@@ -82,7 +85,7 @@ def make_csv_dataset(
             header,
             num_rows_for_inference,
             select_columns,
-            lambda filename: file_io.FileIO(filename, "r")
+            lambda filename: file_io.FileIO(filename, "r"),
         )
 
     if select_columns is not None and len(column_defaults) != len(select_columns):

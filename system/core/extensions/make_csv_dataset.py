@@ -17,6 +17,15 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
+import collections
+
+import tensorflow as tf
+from tensorflow.data.experimental import AUTOTUNE
+from tensorflow.python.data.experimental.ops.readers import (
+    _infer_column_defaults,
+    _infer_column_names,
+    _get_file_names,
+)
 from tensorflow.python.data.experimental.ops.readers import (
     dataset_ops,
     dtypes,
@@ -26,14 +35,7 @@ from tensorflow.python.data.experimental.ops.readers import (
     CsvDataset,
     _maybe_shuffle_and_repeat,
 )
-from tensorflow.python.data.experimental.ops.readers import (
-    _infer_column_defaults,
-    _infer_column_names,
-    _get_file_names,
-)
-import tensorflow as tf
-import collections
-from tensorflow.python.data.experimental.ops import optimization
+from tensorflow_core.python.lib.io import file_io
 
 _ACCEPTABLE_CSV_TYPES = (
     dtypes.float32,
@@ -59,12 +61,11 @@ def make_csv_dataset_multiple_output(
     shuffle=True,
     shuffle_buffer_size=10000,
     shuffle_seed=None,
-    prefetch_buffer_size=optimization.AUTOTUNE,
+    prefetch_buffer_size=AUTOTUNE,
     num_parallel_reads=1,
     sloppy=False,
     num_rows_for_inference=100,
     compression_type=None,
-    input_name=None,
 ):
     # Create dataset of all matching filenames
     filenames = _get_file_names(file_pattern, False)
@@ -78,7 +79,12 @@ def make_csv_dataset_multiple_output(
         if not header:
             raise ValueError("Cannot infer column names without a header line.")
         # If column names are not provided, infer from the header lines
-        column_names = _infer_column_names(filenames, field_delim, use_quote_delim)
+        column_names = _infer_column_names(
+            filenames,
+            field_delim,
+            use_quote_delim,
+            lambda filename: file_io.FileIO(filename, "r"),
+        )
     if len(column_names) != len(set(column_names)):
         raise ValueError("Cannot have duplicate column names.")
 
@@ -102,6 +108,7 @@ def make_csv_dataset_multiple_output(
             header,
             num_rows_for_inference,
             select_columns,
+            lambda filename: file_io.FileIO(filename, "r"),
         )
 
     if select_columns is not None and len(column_defaults) != len(select_columns):

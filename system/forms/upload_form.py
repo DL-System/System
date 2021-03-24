@@ -1,11 +1,6 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileAllowed
-from wtforms import (
-    SubmitField,
-    SelectField,
-    FormField,
-    TextAreaField
-)
+from wtforms import SubmitField, SelectField, FormField, TextAreaField
 from flask_uploads import UploadSet, DATA
 from wtforms import StringField
 from wtforms.widgets import HTMLString, html_params

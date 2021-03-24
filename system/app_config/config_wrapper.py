@@ -136,6 +136,6 @@ class ConfigApp(object):
         return os.urandom(42)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     c = ConfigApp()
     print(c.config.sections())

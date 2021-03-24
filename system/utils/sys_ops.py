@@ -1,21 +1,19 @@
+import json
+import ntpath
 import os
+import shutil
 import socket
 import zipfile
-import ntpath
-
-from tensorflow.python.platform import gfile
-from contextlib import closing
-from werkzeug.utils import secure_filename
-from pathlib import Path
-import shutil
-
 from collections import OrderedDict
-from . import preprocessing
-
-from .request_util import get_filename, get_modelname
+from contextlib import closing
+from pathlib import Path
 
 import numpy as np
-import json
+from tensorflow.python.platform import gfile
+from werkzeug.utils import secure_filename
+
+from . import preprocessing
+from .request_util import get_filename, get_modelname
 
 
 def rename(path_from, path_to):
@@ -221,7 +219,7 @@ def check_df(test_df, df, targets, filename):
         temp_df = df.drop(columns=targets)
         try:
             test_df_tmp = test_df[temp_df.columns.values]
-        except:
+        except Exception:
             dif = [c for c in temp_df.columns.values if c not in test_df.columns.values]
             raise ValueError("Column names invalid. Columns not found: " + str(dif))
 
@@ -312,7 +310,7 @@ def export_models(export_dir, selected_rows, model_name):
     return file_path
 
 
-def gen_example(targets, data, df, model_name, pred):
+def gen_example(targets, data, df, pred):
     feat_keys = [x for x in df.drop(targets, axis=1).columns.values]
     dtypes = [x for x in df[feat_keys].dtypes]
     example = {}
@@ -487,7 +485,7 @@ def delete_file_test(request, param_configs, USER_ROOT, username):
             tree_remove(path)
         else:
             return True, "Test file not found"
-    except:
+    except Exception:
         return True, "Error server"
     return False, None
 

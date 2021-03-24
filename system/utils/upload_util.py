@@ -1,8 +1,8 @@
 import os
-from ..data.tabular import Tabular
-from ..data.image import Image
 
 from .sys_ops import get_dataset_path, get_all_datasets, get_user_path
+from ..data.image import Image
+from ..data.tabular import Tabular
 
 
 def get_text(file_name):
@@ -20,7 +20,7 @@ def get_examples():
     return examples
 
 
-def new_config(dataset_name, username, sess, USER_ROOT, appConfig):
+def new_config(dataset_name, username, sess, USER_ROOT):
     dataset_path = get_dataset_path(USER_ROOT, username, dataset_name)
     files = [
         f

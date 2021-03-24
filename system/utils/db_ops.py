@@ -60,7 +60,7 @@ def sign_up(form):
         username=form.username.data,
         email=form.email.data,
         password=hashed_passwd,
-        token=token
+        token=token,
     )
     db.session.add(new_user)
     db.session.commit()

@@ -1,5 +1,16 @@
 import _csv
+import base64
+import ntpath
+import os
 from abc import ABCMeta, abstractmethod
+from io import BytesIO
+
+import PIL.Image
+import cv2
+import dill as pickle
+import numpy as np
+import pandas as pd
+from skimage.segmentation import mark_boundaries
 
 from system.data import tabular, image
 from system.data.utils.image import (
@@ -7,10 +18,6 @@ from system.data.utils.image import (
     find_image_files_from_file,
     find_images_test_file,
 )
-from io import BytesIO
-from skimage.segmentation import mark_boundaries
-from ..utils.explain_util import get_reg_explain, get_class_explain, clean_predict_table
-from ..utils.request_util import *
 from ..utils import (
     feature_util,
     preprocessing,
@@ -19,15 +26,9 @@ from ..utils import (
     explain_util,
     sys_ops,
 )
+from ..utils.explain_util import get_reg_explain, get_class_explain, clean_predict_table
+from ..utils.request_util import *
 from ..utils.sys_ops import unzip, tree_remove, find_dataset_from_numpy
-import os
-import pandas as pd
-import dill as pickle
-import cv2
-import base64
-import numpy as np
-import PIL.Image
-import ntpath
 
 
 def encode_image(path):
@@ -347,7 +348,7 @@ class Tabular(Helper):
                 else self._dataset.get_test_file()
             )
         df_test = pd.read_csv(test_filename)
-        has_targets = df_test[self.get_targets()].isnull().any().any() == False
+        has_targets = df_test[self.get_targets()].isnull().any().any() is False
         if not has_targets:
             df_test.drop(columns=self.get_targets(), inplace=True)
         return has_targets, test_filename, df_test, None
@@ -370,10 +371,11 @@ class Tabular(Helper):
     def explain_return(self, request, result):
         new_features = self.get_new_features(request)
         targets = self.get_targets()
-        params = {}
-        params["data_type"] = "tabular"
-        params["features"] = {
-            k: new_features[k] for k in new_features.keys() if k not in targets
+        params = {
+            "data_type": "tabular",
+            "features": {
+                k: new_features[k] for k in new_features.keys() if k not in targets
+            },
         }
         if result.mode == "regression":
             graphs, predict_table = get_reg_explain(result)
@@ -399,7 +401,7 @@ class Image(Helper):
         self._example_image = None
 
     @staticmethod
-    def extract_dataset(option, file_path):
+    def extract_dataset(option):
         data_dir = ""
         info_file = ""
         if option == "option1":
@@ -423,7 +425,6 @@ class Image(Helper):
         pass
 
     def generate_rest_call(self, pred):
-        data = None
         filename = self._dataset._val_images[0]
         img = cv2.imread(filename, cv2.IMREAD_UNCHANGED)
         if len(img.shape) == 2:
@@ -510,16 +511,12 @@ class Image(Helper):
         )
 
         data = self.get_labels_images()
+        height = str(request.get_json()["height"])
+        width = request.get_json()["width"]
+        str_c = str(c)
 
-        data["input_shape"] = (
-            "["
-            + str(request.get_json()["height"])
-            + ","
-            + str(request.get_json()["width"])
-            + ","
-            + str(c)
-            + "]"
-        )
+        data["input_shape"] = f"[{height},{width},{str_c}]"
+
         data["n_channels"] = c
         data["num_outputs"] = self._dataset.get_num_outputs()
 

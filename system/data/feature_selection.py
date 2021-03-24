@@ -117,7 +117,9 @@ class FeatureSelection:
                 mean = df[key].mean()
                 stdv = df[key].std()
             numerical_features.append(
-                tf.feature_column.numeric_column(key, normalizer_fn=lambda x: (x - mean) / stdv)
+                tf.feature_column.numeric_column(
+                    key, normalizer_fn=lambda x: (x - mean) / stdv
+                )
             )
 
         range_features = [
