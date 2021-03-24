@@ -22,8 +22,8 @@ class Tabular:
     MIN_RANGE_SIZE = 1
 
     def __init__(self, name, file):
-        self._name = None
-        self._file = None
+        self._name = ""
+        self._file = ""
 
         self._train_file = None
         self._validation_file = None
@@ -487,7 +487,7 @@ class Tabular:
                     if feature_types[c] == "hash":
                         try:
                             features[c] = int(float(features[c]))
-                        except:
+                        except Exception:
                             pass
                     df.loc[:, c] = df.loc[:, c].astype("category")
                     mapp = {

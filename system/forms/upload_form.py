@@ -1,17 +1,14 @@
 from flask_wtf import FlaskForm
-from flask_wtf.file import FileRequired, FileAllowed, FileField
+from flask_wtf.file import FileAllowed
 from wtforms import (
     SubmitField,
     SelectField,
     FormField,
-    SelectMultipleField,
-    BooleanField,
-    TextAreaField,
+    TextAreaField
 )
 from flask_uploads import UploadSet, DATA
 from wtforms import StringField
-from wtforms.widgets import HTMLString, html_params, TextArea
-from wtforms.validators import InputRequired
+from wtforms.widgets import HTMLString, html_params
 
 
 class FileInputWithAccept:

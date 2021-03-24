@@ -7,11 +7,9 @@ from tensorflow.python.training.basic_session_run_hooks import (
     NeverTriggerTimer,
     SecondOrStepTimer,
 )
-from tensorflow.python.training.session_run_hook import SessionRunArgs
 from tensorflow.python.util.tf_export import tf_export
 
 import smtplib
-from email.mime.text import MIMEText
 
 
 @tf_export("train.EmailAtStepHook")
@@ -67,7 +65,7 @@ class EmailAtStepHook(session_run_hook.SessionRunHook):
         server = smtplib.SMTP(smtpserver)
         server.starttls()
         server.login(self._server_info["login"], self._server_info["password"])
-        problems = server.sendmail(
+        server.sendmail(
             self._server_info["email_address"],
             self._user_info["email_address"],
             message,

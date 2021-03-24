@@ -136,7 +136,6 @@ class ConfigApp(object):
         return os.urandom(42)
 
 
-# if __name__ == '__main__':
-#     c = ConfigApp()
-#     print(c.get_sql_database_uri())
-#     print(c.config.sections())
+if __name__ == '__main__':
+    c = ConfigApp()
+    print(c.config.sections())

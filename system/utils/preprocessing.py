@@ -29,7 +29,7 @@ def clean_field_names(filename):
     for c in df.columns:
         try:
             df[c] = df[c].astype(str).str.replace(",", "")
-        except:
+        except Exception:
             pass
 
     df.to_csv(filename, index=False)
@@ -54,7 +54,7 @@ def has_header(csvfile, close=True):
 
     try:
         has_header = sniffer.has_header(csvfile.read(sample_bytes))
-    except:
+    except Exception:
         has_header = sniffer.has_header(
             csvfile.read(sample_bytes + 50)
         )  # TODO it does not work!!

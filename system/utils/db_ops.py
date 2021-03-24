@@ -1,7 +1,6 @@
 import random
 import string
 from datetime import datetime
-from secrets import token_hex
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from ..database.db import db
@@ -61,7 +60,7 @@ def sign_up(form):
         username=form.username.data,
         email=form.email.data,
         password=hashed_passwd,
-        token=token,
+        token=token
     )
     db.session.add(new_user)
     db.session.commit()

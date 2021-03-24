@@ -113,13 +113,11 @@ class FeatureSelection:
         numerical_features = []
 
         for key in feature_types["numerical"]:
-            norm_fn = None
             if normalize and df[key].nunique() > 1:
                 mean = df[key].mean()
                 stdv = df[key].std()
-                norm_fn = lambda x: (x - mean) / stdv
             numerical_features.append(
-                tf.feature_column.numeric_column(key, normalizer_fn=norm_fn)
+                tf.feature_column.numeric_column(key, normalizer_fn=lambda x: (x - mean) / stdv)
             )
 
         range_features = [
