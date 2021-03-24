@@ -30,6 +30,7 @@ matplotlib = "==2.2.2"
 pandas-profiling = "==1.4.1"
 psycopg2-binary = "==2.8.6"
 Flask-Bootstrap = "==3.3.7.1"
+gunicorn = "*"
 
 [dev-packages]
 
