@@ -401,7 +401,7 @@ class Image(Helper):
         self._example_image = None
 
     @staticmethod
-    def extract_dataset(option):
+    def extract_dataset(option, file_path):
         data_dir = ""
         info_file = ""
         if option == "option1":

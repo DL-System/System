@@ -310,7 +310,7 @@ def export_models(export_dir, selected_rows, model_name):
     return file_path
 
 
-def gen_example(targets, data, df, pred):
+def gen_example(targets, data, df, model_name, pred):
     feat_keys = [x for x in df.drop(targets, axis=1).columns.values]
     dtypes = [x for x in df[feat_keys].dtypes]
     example = {}

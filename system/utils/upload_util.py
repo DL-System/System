@@ -20,7 +20,7 @@ def get_examples():
     return examples
 
 
-def new_config(dataset_name, username, sess, USER_ROOT):
+def new_config(dataset_name, username, sess, USER_ROOT, appConfig):
     dataset_path = get_dataset_path(USER_ROOT, username, dataset_name)
     files = [
         f

@@ -292,7 +292,7 @@ def image_graphs():
     if data is None:
         local_sess = Session(app, appConfig)
         local_sess.add_user((username, session["_id"]))
-        new_config(dataset_name, username, local_sess, USER_ROOT)
+        new_config(dataset_name, username, local_sess, USER_ROOT, appConfig)
         data = {"data": local_sess.get_helper().get_data()}
         save_image_graphs(USER_ROOT, username, dataset_name, data)
     return jsonify(**data)
@@ -382,7 +382,7 @@ def gui_select_data():
     local_sess.add_user((username, session["_id"]))
     data = get_summary(USER_ROOT, username, dataset_name)
     if data is None:
-        new_config(dataset_name, username, local_sess, USER_ROOT)
+        new_config(dataset_name, username, local_sess, USER_ROOT, appConfig)
         data = local_sess.get_helper().get_data()
         save_summary(USER_ROOT, username, dataset_name, data)
     return jsonify(data=data)
@@ -396,7 +396,7 @@ def gui_input():
     username = session["user"]
     local_sess.add_user((username, session["_id"]))
     dataset_name = get_dataset(request)
-    new_config(dataset_name, username, local_sess, USER_ROOT)
+    new_config(dataset_name, username, local_sess, USER_ROOT, appConfig)
     hlp = local_sess.get_helper()
     hlp.set_split(get_split(request))
     hlp.process_features_request(request)
@@ -412,7 +412,7 @@ def save_model():
     username = session["user"]
     local_sess.add_user((username, session["_id"]))
     dataset_name = get_dataset(request)
-    new_config(dataset_name, username, local_sess, USER_ROOT)
+    new_config(dataset_name, username, local_sess, USER_ROOT, appConfig)
     hlp = local_sess.get_helper()
     hlp.set_split(get_split(request))
     local_sess = save_local_model(local_sess, request, USER_ROOT, username)
