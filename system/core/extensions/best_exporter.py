@@ -1,19 +1,18 @@
 from __future__ import absolute_import
 
-import abc
-import os
-import json
 import glob
+import json
+import os
 import shutil
 
 from tensorflow.python.estimator import gc
 from tensorflow.python.estimator import util
 from tensorflow.python.estimator.canned import metric_keys
+from tensorflow.python.estimator.exporter import Exporter, _SavedModelExporter
 from tensorflow.python.framework import errors_impl
 from tensorflow.python.platform import gfile
 from tensorflow.python.platform import tf_logging
 from tensorflow.python.summary import summary_iterator
-from tensorflow.python.estimator.exporter import Exporter, _SavedModelExporter
 
 
 def _verify_compare_fn_args(compare_fn):
@@ -27,7 +26,7 @@ def _verify_compare_fn_args(compare_fn):
         raise ValueError(
             "compare_fn (%s) must include current_eval_result argument." % compare_fn
         )
-    non_valid_args = list(args - set(["best_eval_result", "current_eval_result"]))
+    non_valid_args = list(args - {"best_eval_result", "current_eval_result"})
     if non_valid_args:
         raise ValueError(
             "compare_fn (%s) has following not expected args: %s"
