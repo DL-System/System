@@ -3,14 +3,19 @@
 
 #### Docker
 ```bash
-docker run -p 5000:5000 -p 55500:55600 machine2learn/ezeeai
+docker run -p 8000:8000 ghcr.io/dl-system/system
 ```
 
-You can use the application by launching chrome browser and connecting to http://localhost:5000. 
+You can use the application by launching chrome browser and connecting to http://localhost:8000. 
 
-To save your model after docker finishes you can mount a volume to `/tmp/data` like so:
+To save your model after docker finishes you can mount a volume to `/system/system/user_data` like so:
 ```bash
-docker run -p 5000:5000 -p 55500-55600:55500-55600 -v $(pwd)/data:/tmp/data machine2learn/ezeeai
+docker run -d \
+	--name system \
+	--restart unless-stopped \
+	-p 8000:8000 \
+	-v $(pwd)/data:/system/system/user_data \
+	ghcr.io/dl-system/system
 ```
 
 
