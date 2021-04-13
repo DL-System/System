@@ -1,21 +1,24 @@
-FROM python:3.7-alpine
+FROM python:3.7-slim-buster
 
 WORKDIR /system
 
 COPY ./ /system/
 
-RUN set -xe && \
-    rm -rf /var/lib/apt/lists/* && \
-    apk update && \
-    apk add --no-cache linux-headers py3-pip && \
-    apk add --no-cache --virtual .build-deps \
-        build-base gcc cmake python3-dev \
-        freetype-dev libpng-dev openssl-dev \
-        postgresql-dev musl-dev openblas-dev gfortran && \
-    pip3 install --upgrade pip setuptools wheel numpy==1.16.4 && \
-    pip3 --no-cache-dir install -r requirements.txt && \
-    apk del .build-deps && \
-    sed -i -e "1i #\!/usr/bin/python\n" converter/convert.py && \
-    ln -s converter/convert.py /usr/bin/convert
+RUN apt update \
+    && apt install -y --no-install-recommends \
+        build-essential \
+        python3-opencv \
+    && pip3 install --upgrade pip setuptools wheel numpy==1.16.4 \
+    && pip3 --no-cache-dir install -r requirements.txt \
+    && sed -i -e "1i #\! /usr/bin/env python3\n" converter/convert.py \
+    && ln converter/convert.py converter/convert
 
-ENTRYPOINT gunicorn wsgi:app
+ENV PATH="/system/converter/:${PATH}"
+
+ENV HOST="0.0.0.0"
+
+ENV PORT=8000
+
+VOLUME /system/system/user_date
+
+ENTRYPOINT gunicorn --bind=$HOST:$PORT wsgi:app
