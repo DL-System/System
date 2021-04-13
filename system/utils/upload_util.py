@@ -1,8 +1,8 @@
 import os
-from ..data.tabular import Tabular
-from ..data.image import Image
 
 from .sys_ops import get_dataset_path, get_all_datasets, get_user_path
+from ..data.image import Image
+from ..data.tabular import Tabular
 
 
 def get_text(file_name):

@@ -1,11 +1,11 @@
 [[source]]
-url = "https://pypi.org/simple"
+url = "https://mirrors.aliyun.com/pypi/simple/"
 verify_ssl = true
-name = "pypi"
+name = "aliyun"
 
 [packages]
-tensorflow = "==1.14.0"
-tensorflowjs = "==1.2.3"
+tensorflow = "==1.15.0"
+tensorflowjs = "==1.4.0"
 keras = "==2.2.4"
 dill = "==0.2.8.2"
 GPUtil = "==1.4.0"
@@ -30,6 +30,7 @@ matplotlib = "==2.2.2"
 pandas-profiling = "==1.4.1"
 psycopg2-binary = "==2.8.6"
 Flask-Bootstrap = "==3.3.7.1"
+gunicorn = "*"
 
 [dev-packages]
 

@@ -4,7 +4,7 @@ from flask import json
 def get_json_attr(request, attr):
     try:
         return json.loads(request.form[attr])
-    except:
+    except Exception:
         return request.get_json()[attr]
 
 
@@ -63,7 +63,7 @@ def get_loss(request):
 def get_model(request):
     try:
         return get_json_attr(request, "model")
-    except:
+    except Exception:
         return request.form["model"]
 
 
@@ -78,7 +78,7 @@ def get_model_name(request):
 def get_modelname(request):
     try:
         return request.form["model_name"]
-    except:
+    except Exception:
         return request.get_json()["model_name"]
 
 

@@ -1,6 +1,6 @@
 
-CREATE DATABASE ezeeai;
-USE ezeeai;
+CREATE DATABASE system;
+USE system;
 
 CREATE TABLE public.users
 			(

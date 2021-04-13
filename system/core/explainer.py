@@ -1,7 +1,7 @@
-from lime import lime_tabular, lime_image
-from scipy.misc import imresize
 import numpy as np
 import tensorflow as tf
+from lime import lime_tabular, lime_image
+from scipy.misc import imresize
 
 
 class TabularExplainer:
@@ -78,9 +78,7 @@ class ImageExplainer:
         self._dataset = dataset
         self._explainer = lime_image.LimeImageExplainer(verbose=verbose)
 
-    def explain_instance(
-        self, model, features, num_features=5, top_labels=3, sel_target=None
-    ):
+    def explain_instance(self, model, features, num_features=5):
         def predict_fn(x):
             x = x.astype(np.float32)
             x = np.apply_along_axis(self._dataset.normalize, 0, x)

@@ -31,7 +31,7 @@ def check_structure(request, hlp):
     try:
         has_targets, test_filename, df_test, result = hlp.test_request(request)
         return None, has_targets, test_filename, df_test, result
-    except Exception as e:
+    except Exception:
         return "Test's file structure is not correct", None, None, None, None
 
 

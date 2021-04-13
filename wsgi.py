@@ -1,4 +1,3 @@
-import webbrowser
 from system.dfweb import app, appConfig
 
 

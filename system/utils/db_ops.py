@@ -1,7 +1,6 @@
 import random
 import string
 from datetime import datetime
-from secrets import token_hex
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from ..database.db import db

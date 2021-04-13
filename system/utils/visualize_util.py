@@ -1,11 +1,10 @@
-from scipy import stats
 import matplotlib
+import matplotlib.mlab as mlab
+import matplotlib.pyplot as plt
+import numpy as np
+from scipy import stats
 
 matplotlib.use("Agg")
-
-import matplotlib.pyplot as plt
-import matplotlib.mlab as mlab
-import numpy as np
 
 
 def get_norm_corr(df):

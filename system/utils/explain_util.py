@@ -4,8 +4,7 @@ from scipy import stats
 
 
 def create_graphs(k, dict_list):
-    graphs = {}
-    graphs[k] = {}
+    graphs = {k: {}}
     graphs[k]["labels"] = []
     graphs[k]["data"] = []
     for a in dict_list:

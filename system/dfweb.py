@@ -1,15 +1,9 @@
+import ntpath
+from configparser import NoSectionError
+from functools import wraps
+
 import pandas as pd
 import pandas_profiling as pp
-import ntpath
-
-# import logging.config
-# from config.logging_config import logging_config
-
-from .app_config import config_wrapper
-from .config import config_reader
-from configparser import NoSectionError
-from .database.db import db
-
 from flask import (
     Flask,
     render_template,
@@ -23,28 +17,27 @@ from flask import (
 from flask_bootstrap import Bootstrap
 from flask_login import LoginManager, login_user, login_required, logout_user
 
+from .app_config import config_wrapper
+from .config import config_reader
+from .core.session import Session
+from .core.thread_handler import ThreadHandler
+from .database.db import db
+from .database.user import User
 from .forms.login_form import LoginForm
 from .forms.parameters_form import GeneralParamForm
 from .forms.register import RegisterForm
-from .forms.upload_user import UploadUserForm
 from .forms.upload_form import NewTabularFileForm, GenerateDataSet, UploadImageForm
-
-from functools import wraps
-
+from .forms.upload_user import UploadUserForm
 from .generator.simulator import parse
-from .core.session import Session
-from .core.thread_handler import ThreadHandler
-
 from .utils import config_ops
+from .utils.custom import save_local_model, save_cy_model
 from .utils.db_ops import (
     get_token_user,
-    update_token,
     sign_up,
     checklogin,
     update_user,
     get_user_data,
 )
-from .utils.custom import save_local_model, save_cy_model
 from .utils.feature_util import (
     get_tabular_graphs,
     get_image_graphs,
@@ -56,10 +49,11 @@ from .utils.local_utils import *
 from .utils.metrics import *
 from .utils.param_utils import get_params
 from .utils.request_util import *
-from .utils.upload_util import get_examples, new_config
 from .utils.sys_ops import create_custom_path, remove_log, get_log_mess
+from .utils.upload_util import get_examples, new_config
 
-from .database.user import User
+# import logging.config
+# from config.logging_config import logging_config
 
 # WTF_CSRF_SECRET_KEY = os.urandom(42)
 
@@ -204,7 +198,7 @@ def tensorboard():
             sess.set_config_file(config_file)
             sess.load_config()
             port = th.get_port(username, sess.get_config_file())
-        except:
+        except Exception:
             pass
     return render_template(
         "tensorboard.html",

@@ -15,7 +15,7 @@ from . import request_util, db_ops
 from .metrics import train_eval_graphs
 from .param_utils import set_form, set_checkpoint_dir
 from .request_util import is_run
-from .sys_ops import get_config_path, get_canned_data, get_log_mess, get_log_path
+from .sys_ops import get_config_path, get_canned_data, get_log_path
 
 
 def define_empty_run_params():
@@ -143,7 +143,7 @@ def create_result_parameters(request, sess, checkpoint=None):
     all_params_config = config_reader.read_config(sess.get_config_file())
     try:
         rb = request_util.get_radiob(request) if checkpoint is None else checkpoint
-    except:
+    except Exception:
         rb = request.get_json()["checkpoint"]
     set_checkpoint_dir(all_params_config, rb)
     return all_params_config

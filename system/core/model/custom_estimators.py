@@ -15,11 +15,11 @@ from keras.utils.generic_utils import (
 import dill as pickle
 
 optimizer_map = {
-    "Adagrad": tf.train.AdagradOptimizer,
-    "Adam": tf.train.AdamOptimizer,
-    "Ftrl": tf.train.FtrlOptimizer,
-    "RMSProp": tf.train.RMSPropOptimizer,
-    "SGD": tf.train.GradientDescentOptimizer,
+    "Adagrad": tf.compat.v1.train.AdagradOptimizer,
+    "Adam": tf.compat.v1.train.AdamOptimizer,
+    "Ftrl": tf.compat.v1.train.FtrlOptimizer,
+    "RMSProp": tf.compat.v1.train.RMSPropOptimizer,
+    "SGD": tf.compat.v1.train.GradientDescentOptimizer,
 }
 
 initializers = {
@@ -498,6 +498,13 @@ def run_internal_graph(model, inputs, mode, mask=None):
             layer = node.outbound_layer
             reference_input_tensors = node.input_tensors
             reference_output_tensors = node.output_tensors
+
+            # issue: https://github.com/tensorflow/tensorflow/issues/30208
+            if not isinstance(reference_input_tensors, list):
+                reference_input_tensors = [reference_input_tensors]
+
+            if not isinstance(reference_output_tensors, list):
+                reference_output_tensors = [reference_output_tensors]
 
             # If all previous input tensors are available in tensor_map,
             # then call node.inbound_layer on them.
