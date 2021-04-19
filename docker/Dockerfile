@@ -1,5 +1,11 @@
 FROM python:3.7-slim-buster
 
+ENV PATH="/system/converter/:${PATH}"
+
+ENV HOST="0.0.0.0"
+
+ENV PORT=8000
+
 WORKDIR /system
 
 COPY ./ /system/
@@ -12,12 +18,6 @@ RUN apt update \
     && pip3 --no-cache-dir install -r requirements.txt \
     && sed -i -e "1i #\! /usr/bin/env python3\n" converter/convert.py \
     && ln converter/convert.py converter/convert
-
-ENV PATH="/system/converter/:${PATH}"
-
-ENV HOST="0.0.0.0"
-
-ENV PORT=8000
 
 VOLUME /system/system/user_date
 
