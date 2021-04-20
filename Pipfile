@@ -4,9 +4,9 @@ verify_ssl = true
 name = "aliyun"
 
 [packages]
-tensorflow = "==1.15.0"
-tensorflowjs = "==1.4.0"
-keras = "==2.2.4"
+tensorflow = "==2.4.1"
+tensorflowjs = "==3.4.0"
+keras = "==2.4.3"
 dill = "==0.2.8.2"
 GPUtil = "==1.4.0"
 scipy = "==1.1.0"
@@ -35,4 +35,4 @@ gunicorn = "*"
 [dev-packages]
 
 [requires]
-python_version = "3.7"
+python_version = "3.8"

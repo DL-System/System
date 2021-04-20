@@ -187,7 +187,7 @@ class Image:
 
     def _parse_function(self, image, label=None):
         if self.get_mode() != 3:
-            image_string = tf.read_file(image)
+            image_string = tf.io.read_file(image)
             image = tf.image.decode_jpeg(image_string)
         image_decoded = tf.cast(image, tf.float32)
         size = self.get_image_size().copy()
@@ -195,8 +195,8 @@ class Image:
             size = size[0:2]
 
         if label is not None:
-            return tf.image.resize_images(image_decoded, size), label
-        return tf.image.resize_images(image_decoded, size)
+            return tf.image.resize(image_decoded, size), label
+        return tf.image.resize(image_decoded, size)
 
     def _norm_function(self, image, label=None):
         image = norm_tf_options[self.get_normalization_method()](image)
@@ -217,7 +217,7 @@ class Image:
             interpolation = (
                 "NEAREST" if params["interpolation_rotation_nearest"] else "BILINEAR"
             )
-            angle = tf.random_uniform(
+            angle = tf.random.uniform(
                 [],
                 minval=float(params["angle_from_rotation"]),
                 maxval=float(params["angle_to_rotation"]),
@@ -246,7 +246,7 @@ class Image:
             image = random_central_crop(
                 image, float(params["from_zoom"]), float(params["to_zoom"])
             )
-            image = tf.image.resize_images(image, self.get_image_size().copy()[:2])
+            image = tf.image.resize(image, self.get_image_size().copy()[:2])
 
         return image, label
 
@@ -310,12 +310,12 @@ class Image:
         # TODO normalization
         image = norm_options[self.get_normalization_method()](image)
 
-        return tf.estimator.inputs.numpy_input_fn(
+        return tf.compat.v1.estimator.inputs.numpy_input_fn(
             x=image, y=None, num_epochs=1, shuffle=False
         )
 
     def serving_input_receiver_fn(self):
-        receiver_tensors = tf.placeholder(
+        receiver_tensors = tf.compat.v1.placeholder(
             tf.float32, [None, None, None, self._n_channels]
         )
         return tf.estimator.export.ServingInputReceiver(

@@ -46,7 +46,7 @@ class TabularExplainer:
             local_features = {k: x[:, i] for i, k in enumerate(features.keys())}
             local_features = self.dataset.from_array(local_features)
 
-            predict_input_fn = tf.estimator.inputs.numpy_input_fn(
+            predict_input_fn = tf.compat.v1.estimator.inputs.numpy_input_fn(
                 x=local_features, y=None, num_epochs=1, shuffle=False
             )
             with tf.device("/cpu:0"):  # TODO maybe check if gpu is free
@@ -82,7 +82,7 @@ class ImageExplainer:
         def predict_fn(x):
             x = x.astype(np.float32)
             x = np.apply_along_axis(self._dataset.normalize, 0, x)
-            predict_input_fn = tf.estimator.inputs.numpy_input_fn(
+            predict_input_fn = tf.compat.v1.estimator.inputs.numpy_input_fn(
                 x=x, y=None, num_epochs=1, shuffle=False
             )
             with tf.device("/cpu:0"):  # TODO maybe check if gpu is free
@@ -104,7 +104,7 @@ class ImageExplainer:
 
         features = self._dataset.normalize(features)
 
-        predict_input_fn = tf.estimator.inputs.numpy_input_fn(
+        predict_input_fn = tf.compat.v1.estimator.inputs.numpy_input_fn(
             x=features[np.newaxis, ...], y=None, num_epochs=1, shuffle=False
         )
         with tf.device("/cpu:0"):  # TODO maybe check if gpu is free
