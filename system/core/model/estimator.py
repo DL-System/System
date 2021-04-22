@@ -57,7 +57,7 @@ class AbstractEstimator(metaclass=ABCMeta):
         fh.setFormatter(formatter)
         log.addHandler(fh)
 
-        tf.compat.v1.reset_default_graph()
+        tf.reset_default_graph()
         if len(check_exports(params["export_dir"])) == 0:
             self.clear_checkpoint()
 
@@ -70,8 +70,8 @@ class AbstractEstimator(metaclass=ABCMeta):
         save_summary_steps = self.params[SAVE_SUMMARY_STEPS]
         keep_checkpoint_max = self.params[KEEP_CHECKPOINT_MAX]
 
-        gpu_options = tf.compat.v1.GPUOptions(allow_growth=True)
-        config = tf.compat.v1.ConfigProto(gpu_options=gpu_options)
+        gpu_options = tf.GPUOptions(allow_growth=True)
+        config = tf.ConfigProto(gpu_options=gpu_options)
         f = [
             s.function
             for s in inspect.stack()
@@ -172,7 +172,7 @@ class AbstractEstimator(metaclass=ABCMeta):
             #
             # send_email({"email_address": self.email}, server_info)
         except ValueError as e:
-            tf.compat.v1.logging.error(e)
+            tf.logging.error(e)
 
     def _create_explainer(self):
         return (

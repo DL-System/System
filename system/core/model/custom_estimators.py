@@ -112,8 +112,8 @@ def create_train_op(loss, params, mode):
 
     opt = optimizer_map[params["optimizer"]]
     optimizer = opt(learning_rate=params["learning_rate"])
-    loss += tf.compat.v1.losses.get_regularization_loss()
-    train_op = optimizer.minimize(loss, global_step=tf.compat.v1.train.get_global_step())
+    loss += tf.losses.get_regularization_loss()
+    train_op = optimizer.minimize(loss, global_step=tf.train.get_global_step())
     return train_op
 
 
@@ -128,7 +128,7 @@ def create_output(features, params, mode):
 
     if params["mode"] == "custom":
         if hasattr(dataset, "get_feature_columns"):
-            features = tf.compat.v1.feature_column.input_layer(
+            features = tf.feature_column.input_layer(
                 features, dataset.get_feature_columns()
             )
         if isinstance(features, dict):
@@ -143,7 +143,7 @@ def create_output(features, params, mode):
         return run_internal_graph(model, features, mode), label_vocabulary
     if params["mode"] == "canned_dnn":
         if hasattr(dataset, "get_feature_columns"):
-            features = tf.compat.v1.feature_column.input_layer(
+            features = tf.feature_column.input_layer(
                 features, dataset.get_feature_columns()
             )
         if isinstance(features, dict):
@@ -164,14 +164,14 @@ def regressor(features, labels, mode, params):
         return tf.estimator.EstimatorSpec(mode, predictions={"predictions": output})
 
     loss = getattr(tensorflow.losses, params["loss_function"])(
-        tf.reshape(labels, tf.shape(input=output)), output
+        tf.reshape(labels, tf.shape(output)), output
     )
 
     axis = 0 if "label_dimension" in params else None
-    r_squared = rsquared_metric(tf.reshape(labels, tf.shape(input=output)), output, axis=axis)
+    r_squared = rsquared_metric(tf.reshape(labels, tf.shape(output)), output, axis=axis)
     metrics = {"r_squared": r_squared}
-    tf.compat.v1.summary.scalar(
-        "r_squared", rsquared(tf.reshape(labels, tf.shape(input=output)), output, axis=axis)
+    tf.summary.scalar(
+        "r_squared", rsquared(tf.reshape(labels, tf.shape(output)), output, axis=axis)
     )
 
     if mode == tf.estimator.ModeKeys.EVAL:
@@ -188,7 +188,7 @@ def regressor(features, labels, mode, params):
 
 def classifier(features, labels, mode, params):
     output, label_vocabulary = create_output(features, params, mode)
-    predicted_classes = tf.argmax(input=output, axis=1)
+    predicted_classes = tf.argmax(output, 1)
 
     if mode == tf.estimator.ModeKeys.PREDICT:
         predictions = {
@@ -214,10 +214,10 @@ def classifier(features, labels, mode, params):
     loss = getattr(tensorflow.losses, params["loss_function"])(reshaped_labels, output)
 
     probs = tf.nn.softmax(output) if "softmax" not in output.name.lower() else output
-    accuracy = tf.compat.v1.metrics.accuracy(
+    accuracy = tf.metrics.accuracy(
         labels=label_ids, predictions=predicted_classes, name="accuracy"
     )
-    map = tf.compat.v1.metrics.average_precision_at_k(
+    map = tf.metrics.average_precision_at_k(
         labels=label_ids,
         predictions=probs,
         k=params["n_classes"],
@@ -225,8 +225,8 @@ def classifier(features, labels, mode, params):
     )
 
     metrics = {"accuracy": accuracy, "mean_average_precision": map}
-    tf.compat.v1.summary.scalar("accuracy", accuracy[1])
-    tf.compat.v1.summary.scalar("mean_average_precision", map[1])
+    tf.summary.scalar("accuracy", accuracy[1])
+    tf.summary.scalar("mean_average_precision", map[1])
 
     if mode == tf.estimator.ModeKeys.EVAL:
         return tf.estimator.EstimatorSpec(mode, loss=loss, eval_metric_ops=metrics)
@@ -253,21 +253,21 @@ def binary_classifier(features, labels, mode, params):
 
     label_ids = get_label_ids(labels, label_vocabulary)
     loss = getattr(tensorflow.losses, params["loss_function"])(
-        tf.reshape(label_ids, tf.shape(input=output)), output
+        tf.reshape(label_ids, tf.shape(output)), output
     )
 
-    accuracy = tf.compat.v1.metrics.accuracy(
+    accuracy = tf.metrics.accuracy(
         labels=label_ids, predictions=predicted_classes, name="accuracy"
     )
     probs = tf.nn.sigmoid(output) if "sigmoid" not in output.name.lower() else output
-    auc = tf.compat.v1.metrics.auc(labels=label_ids, predictions=probs, name="auc")
-    auc_pr = tf.compat.v1.metrics.auc(
+    auc = tf.metrics.auc(labels=label_ids, predictions=probs, name="auc")
+    auc_pr = tf.metrics.auc(
         labels=label_ids, predictions=probs, name="auc_precision_recall", curve="PR"
     )
-    precision = tf.compat.v1.metrics.precision(
+    precision = tf.metrics.precision(
         labels=label_ids, predictions=probs, name="precision"
     )
-    recall = tf.compat.v1.metrics.recall(labels=label_ids, predictions=probs, name="recall")
+    recall = tf.metrics.recall(labels=label_ids, predictions=probs, name="recall")
     metrics = {
         "accuracy": accuracy,
         "auc": auc,
@@ -275,11 +275,11 @@ def binary_classifier(features, labels, mode, params):
         "precision": precision,
         "recall": recall,
     }
-    tf.compat.v1.summary.scalar("accuracy", accuracy[1])
-    tf.compat.v1.summary.scalar("auc", auc[1])
-    tf.compat.v1.summary.scalar("auc_precision_recall", auc_pr[1])
-    tf.compat.v1.summary.scalar("precision", precision[1])
-    tf.compat.v1.summary.scalar("recall", recall[1])
+    tf.summary.scalar("accuracy", accuracy[1])
+    tf.summary.scalar("auc", auc[1])
+    tf.summary.scalar("auc_precision_recall", auc_pr[1])
+    tf.summary.scalar("precision", precision[1])
+    tf.summary.scalar("recall", recall[1])
 
     if mode == tf.estimator.ModeKeys.EVAL:
         return tf.estimator.EstimatorSpec(mode, loss=loss, eval_metric_ops=metrics)
@@ -334,19 +334,19 @@ def dnn(net, params, mode):
 
 
 def rsquared_metric(labels, predictions, axis=None):
-    SST, update_op1 = tf.compat.v1.metrics.mean_squared_error(
-        labels, tf.reduce_mean(input_tensor=labels, axis=axis, keepdims=True)
+    SST, update_op1 = tf.metrics.mean_squared_error(
+        labels, tf.reduce_mean(labels, axis=axis, keepdims=True)
     )
-    SSE, update_op2 = tf.compat.v1.metrics.mean_squared_error(labels, predictions)
-    return tf.subtract(1.0, tf.compat.v1.div(SSE, SST)), tf.group(update_op1, update_op2)
+    SSE, update_op2 = tf.metrics.mean_squared_error(labels, predictions)
+    return tf.subtract(1.0, tf.div(SSE, SST)), tf.group(update_op1, update_op2)
 
 
 def rsquared(labels, predictions, axis=None):
-    residual = tf.reduce_sum(input_tensor=tf.square(tf.subtract(labels, predictions)))
+    residual = tf.reduce_sum(tf.square(tf.subtract(labels, predictions)))
     total = tf.reduce_sum(
-        input_tensor=tf.square(tf.subtract(labels, tf.reduce_mean(input_tensor=labels, axis=axis, keepdims=True)))
+        tf.square(tf.subtract(labels, tf.reduce_mean(labels, axis=axis, keepdims=True)))
     )
-    r2 = tf.subtract(1.0, tf.compat.v1.div(residual, total))
+    r2 = tf.subtract(1.0, tf.div(residual, total))
     return r2
 
 
@@ -363,7 +363,7 @@ class _DNNModel(tf.keras.Model):
         activation_fn,
         dropout,
         batch_norm,
-        kernel_initializer=tf.compat.v1.glorot_uniform_initializer(),
+        kernel_initializer=tf.glorot_uniform_initializer(),
         kernel_regularizer_params=None,
     ):
         super(_DNNModel, self).__init__()
@@ -382,8 +382,8 @@ class _DNNModel(tf.keras.Model):
             )
 
         for layer_id, num_hidden_units in enumerate(hidden_units):
-            with tf.compat.v1.variable_scope("hiddenlayer_%d" % layer_id) as hidden_layer_scope:
-                hidden_layer = tf.compat.v1.layers.Dense(
+            with tf.variable_scope("hiddenlayer_%d" % layer_id) as hidden_layer_scope:
+                hidden_layer = tf.layers.Dense(
                     units=num_hidden_units,
                     activation=activation_fn,
                     kernel_initializer=kernel_initializer,
@@ -395,11 +395,11 @@ class _DNNModel(tf.keras.Model):
                 self._hidden_layer_scope_names.append(hidden_layer_scope.name)
                 self._hidden_layers.append(hidden_layer)
                 if self._dropout is not None:
-                    dropout_layer = tf.compat.v1.layers.Dropout(rate=self._dropout)
+                    dropout_layer = tf.layers.Dropout(rate=self._dropout)
                     self._add_layer(dropout_layer, dropout_layer.name)
                     self._dropout_layers.append(dropout_layer)
                 if self._batch_norm:
-                    batch_norm_layer = tf.compat.v1.layers.BatchNormalization(
+                    batch_norm_layer = tf.layers.BatchNormalization(
                         # The default momentum 0.99 actually crashes on certain
                         # problem, so here we use 0.999, which is the default of
                         # tf.contrib.layers.batch_norm.
@@ -411,8 +411,8 @@ class _DNNModel(tf.keras.Model):
                     self._add_layer(batch_norm_layer, batch_norm_layer.name)
                     self._batch_norm_layers.append(batch_norm_layer)
 
-        with tf.compat.v1.variable_scope("prediction_layers") as pred_scope:
-            self._prediction_layer = tf.compat.v1.layers.Dense(
+        with tf.variable_scope("prediction_layers") as pred_scope:
+            self._prediction_layer = tf.layers.Dense(
                 units=units,
                 activation=None,
                 kernel_initializer=kernel_initializer,
@@ -432,7 +432,7 @@ class _DNNModel(tf.keras.Model):
         # which modifies the constructed graph. Hence we add another name_scope
         # here which is the one before the training.Model one was applied.
         # TODO(rohanj): Remove this in TF 2.0 (b/116728605)
-        with tf.compat.v1.name_scope(name=_get_previous_name_scope()):
+        with tf.name_scope(name=_get_previous_name_scope()):
 
             for i in range(len(self._hidden_layers)):
                 net = self._hidden_layers[i](net)
