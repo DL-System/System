@@ -165,12 +165,6 @@ class AbstractEstimator(metaclass=ABCMeta):
     def run(self):
         try:
             tf.estimator.train_and_evaluate(self.model, self.train_spec, self.eval_spec)
-            # self.email = self.params['email']
-            # server_info = {"login": "",
-            #                "password": "",
-            #                "email_address": ""}
-            #
-            # send_email({"email_address": self.email}, server_info)
         except ValueError as e:
             tf.logging.error(e)
 
