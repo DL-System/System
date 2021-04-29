@@ -15,7 +15,7 @@
 
 
 {% macro render_single_field_no_label(field) %}
-   {{ field( **kwargs)|safe }}
+    {{ field( **kwargs)|safe }}
 {% endmacro %}
 
 
@@ -169,8 +169,9 @@
             <label for="{{ subfield.name }}" class="control-label"
                    title="{{ subfield.description }}"><b>{{ subfield.label.text }}</b></label>
             {{ subfield(class_='form-control', **kwargs)|safe }}
-            {% if 'script' == subfield.name   %}
-                 <small class="text-muted" id="script_help"> You can expand this text area by dragging the bottom right corner.</small>
+            {% if 'script' == subfield.name %}
+                <small class="text-muted" id="script_help"> You can expand this text area by dragging the bottom right
+                    corner.</small>
             {% endif %}
             <ul>
                 {% for error in subfield.errors %}

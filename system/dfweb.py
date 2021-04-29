@@ -99,7 +99,7 @@ def load_user(user_id):
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
-    form = LoginForm(csrf_enabled=False)
+    form = LoginForm(meta={"csrf": False})
     if form.validate_on_submit():
         local_sess = Session(app, appConfig)
         if not checklogin(
@@ -115,7 +115,7 @@ def login():
 @app.route("/signup", methods=["GET", "POST"])
 @login_required
 def signup():
-    form = RegisterForm(csrf_enabled=False)
+    form = RegisterForm(meta={"csrf": False})
     username = session["user"]
     if form.validate_on_submit():
         if form.password.data != form.password2.data:
@@ -146,7 +146,7 @@ def signup():
 @login_required
 def user_data():
     username = session["user"]
-    form = UploadUserForm(csrf_enabled=False)
+    form = UploadUserForm(meta={"csrf": False})
     if form.validate_on_submit():
         email = form.email.data
         update_user(username, email)
@@ -215,7 +215,7 @@ def tensorboard():
 def upload_tabular():
     username = session["user"]
     examples = get_examples()
-    form = NewTabularFileForm(csrf_enabled=False)
+    form = NewTabularFileForm(meta={"csrf": False})
     if form.validate_on_submit():
         try:
             dataset_name = config_ops.new_config(
@@ -230,7 +230,7 @@ def upload_tabular():
         form=form,
         datasets=config_ops.get_datasets(USER_ROOT, username),
         examples=examples,
-        gen_form=GenerateDataSet(csrf_enabled=False),
+        gen_form=GenerateDataSet(meta={"csrf": False}),
         data_types=config_ops.get_datasets_type(USER_ROOT, username),
     )
 
@@ -239,7 +239,7 @@ def upload_tabular():
 @login_required
 def upload_image():
     username = session["user"]
-    form = UploadImageForm(csrf_enabled=False)
+    form = UploadImageForm(meta={"csrf": False})
     if form.validate_on_submit():
         option_selected = form.selector.data["selector"]
         file = form[option_selected].data["file"]
@@ -517,7 +517,7 @@ def run():
     username = session["user"]
     _, model_configs = config_ops.get_configs_files(USER_ROOT, username)
     user_datasets = config_ops.get_datasets_and_types(USER_ROOT, username)
-    form = GeneralParamForm(csrf_enabled=False)
+    form = GeneralParamForm(meta={"csrf": False})
     (
         running,
         model_name,
@@ -582,36 +582,6 @@ def predict():
         user=username,
         token=get_token_user(username),
         parameters=param_configs,
-    )
-
-
-@app.route("/explain", methods=["POST", "GET"])
-@login_required
-@check_config
-def explain():
-    username = session["user"]
-    if request.method == "POST":
-        local_sess = Session(app, appConfig)
-        hlp, all_params_config = generate_local_sess(
-            local_sess, request, username, session["_id"], USER_ROOT
-        )
-        ep = hlp.process_explain_request(request)
-        if "explanation" in ep:
-            return jsonify(**ep)
-        set_canned_data(username, get_modelname(request), USER_ROOT, all_params_config)
-        result, success = th.explain_estimator(all_params_config, ep)
-        if success:
-            result = hlp.explain_return(request, result)
-            return jsonify(**result)
-        return jsonify(error=result)
-    models, param_configs = config_ops.get_configs_files(USER_ROOT, username)
-    grey_scale = config_ops.get_grey_scale(USER_ROOT, username, models)
-    return render_template(
-        "explain.html",
-        user=username,
-        token=get_token_user(username),
-        parameters=param_configs,
-        grey_scale=grey_scale,
     )
 
 

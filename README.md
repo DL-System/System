@@ -14,6 +14,7 @@ docker run -d \
 	--name system \
 	--restart unless-stopped \
 	-p 8000:8000 \
+	-p 55500:55500 \
 	-v $(pwd)/data:/system/system/user_data \
 	ghcr.io/dl-system/system
 ```
