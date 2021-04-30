@@ -3,7 +3,7 @@
 
 #### Docker
 ```bash
-docker run -p 8000:8000 ghcr.io/dl-system/system
+docker run -p 8000:8000 -p 55500:55500 ghcr.io/dl-system/system
 ```
 
 You can use the application by launching chrome browser and connecting to http://localhost:8000. 
