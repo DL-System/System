@@ -25,6 +25,12 @@ jobs:
           registry: ghcr.io
           username: dl-system
           password: ${{ secrets.DOCKER_TOKEN }}
+      - name: Tencent Docker Login
+        uses: docker/login-action@v1
+        with:
+          registry: hkccr.ccs.tencentyun.com
+          username: ${{ secrets.TENCENT_USER }}
+          password: ${{ secrets.TENCENT_PASS }}
       - name: Build and push
         uses: docker/build-push-action@v2
         with:
@@ -34,4 +40,4 @@ jobs:
           push: true
           tags: |
             ghcr.io/dl-system/system:dev
-
+            hkccr.ccs.tencentyun.com/dovhk/system:dev
