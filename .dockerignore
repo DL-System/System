@@ -95,4 +95,3 @@ venv/
 
 README.md
 system/user_data/test/*
-Pipfile.lock
