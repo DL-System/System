@@ -20,7 +20,7 @@ RUN apt update \
     && mv converter/config /usr/local/sbin
     && ln /usr/local/sbin/convert.py /usr/local/sbin/tfconvert
     && chmod +x /usr/local/sbin/tfconvert
-    && rm -rm converter/
+    && rm -rf converter/
 
 VOLUME /system/system/user_date
 
