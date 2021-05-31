@@ -16,10 +16,10 @@ RUN apt update \
     && pipenv lock -r > requirements.txt \
     && pip3 --no-cache-dir install -r requirements.txt \
     && sed -i -e "1i #\! /usr/bin/env python3\n" converter/convert.py \
-    && mv converter/convert.py /usr/local/sbin
-    && mv converter/config /usr/local/sbin
-    && ln /usr/local/sbin/convert.py /usr/local/sbin/tfconvert
-    && chmod +x /usr/local/sbin/tfconvert
+    && mv converter/convert.py /usr/local/sbin \
+    && mv converter/config /usr/local/sbin \
+    && ln /usr/local/sbin/convert.py /usr/local/sbin/tfconvert \
+    && chmod +x /usr/local/sbin/tfconvert \
     && rm -rf converter/
 
 VOLUME /system/system/user_date
