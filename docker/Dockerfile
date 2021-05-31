@@ -1,7 +1,6 @@
 FROM python:3.7.10
 
-ENV PATH="/system/converter/:${PATH}" \
-    HOST="0.0.0.0" \
+ENV HOST="0.0.0.0" \
     PORT="8000" \
     DATA_ROOT_PATH="/system/system/user_date"
 
@@ -17,7 +16,11 @@ RUN apt update \
     && pipenv lock -r > requirements.txt \
     && pip3 --no-cache-dir install -r requirements.txt \
     && sed -i -e "1i #\! /usr/bin/env python3\n" converter/convert.py \
-    && ln converter/convert.py converter/tfconvert
+    && mv converter/convert.py /usr/local/sbin
+    && mv converter/config /usr/local/sbin
+    && ln /usr/local/sbin/convert.py /usr/local/sbin/tfconvert
+    && chmod +x /usr/local/sbin/tfconvert
+    && rm -rm converter/
 
 VOLUME /system/system/user_date
 
