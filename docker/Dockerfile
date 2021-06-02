@@ -2,7 +2,7 @@ FROM python:3.7.10
 
 ENV HOST="0.0.0.0" \
     PORT="8000" \
-    DATA_ROOT_PATH="/system/system/user_date"
+    DATA_ROOT_PATH="/system/system/user_data"
 
 WORKDIR /system
 
