@@ -1,4 +1,6 @@
-FROM python:3.7.10
+FROM python:3.7-slim
+
+ARG DEBIAN_FRONTEND=noninteractive
 
 ENV HOST="0.0.0.0" \
     PORT="8000" \
@@ -20,7 +22,7 @@ RUN apt update \
     && mv converter/config /usr/local/sbin \
     && ln /usr/local/sbin/convert.py /usr/local/sbin/tfconvert \
     && chmod +x /usr/local/sbin/tfconvert \
-    && rm -rf converter/
+    && rm -rf converter/ /var/lib/apt/lists/*
 
 VOLUME /system/system/user_date
 
